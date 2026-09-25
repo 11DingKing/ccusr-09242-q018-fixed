@@ -3,8 +3,18 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from sqlalchemy import text
+
 from app.core import init_db, SessionLocal
 from app.models import Base, ProvinceReferenceLine, Warning, AttributionRecord
+
+
+def ensure_column(db, table: str, column: str, ddl: str):
+    """为既有 SQLite 表幂等补列。"""
+    existing = {row[1] for row in db.execute(text(f"PRAGMA table_info({table})"))}
+    if column not in existing:
+        db.execute(text(f"ALTER TABLE {table} ADD COLUMN {ddl}"))
+        print(f"   补充列: {table}.{column}")
 
 
 def migrate():
@@ -18,7 +28,12 @@ def migrate():
 
     db = SessionLocal()
     try:
-        print("\n2. 检查新表数据...")
+        print("\n2. 对齐既有表的列...")
+        ensure_column(db, "graduates", "employer_name", "employer_name VARCHAR(200)")
+        ensure_column(db, "graduates", "employment_start_date", "employment_start_date DATE")
+        db.commit()
+
+        print("\n3. 检查新表数据...")
         bench_count = db.query(ProvinceReferenceLine).count()
         warning_count = db.query(Warning).count()
         attribution_count = db.query(AttributionRecord).count()
@@ -28,9 +43,9 @@ def migrate():
         print(f"   归因记录表: {attribution_count} 条记录")
 
         if bench_count == 0:
-            print("\n3. 省基准线表为空，请运行 python scripts/init_data.py 初始化数据")
+            print("\n4. 省基准线表为空，请运行 python scripts/init_data.py 初始化数据")
         else:
-            print("\n3. 数据库迁移完成！")
+            print("\n4. 数据库迁移完成！")
 
     except Exception as e:
         print(f"\n迁移失败: {e}")

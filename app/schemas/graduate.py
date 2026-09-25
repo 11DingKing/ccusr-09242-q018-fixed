@@ -1,5 +1,5 @@
-from typing import Optional
-from datetime import datetime
+from typing import List, Optional
+from datetime import date, datetime
 from .common import BaseSchema, TimestampSchema
 from .college import College
 from .micro_major import MicroMajor
@@ -20,6 +20,8 @@ class GraduateBase(BaseSchema):
     unit_industry: Optional[str] = None
     salary_range: Optional[SalaryRange] = None
     is_aligned: bool = False
+    employer_name: Optional[str] = None
+    employment_start_date: Optional[date] = None
 
 
 class GraduateCreate(GraduateBase):
@@ -38,6 +40,29 @@ class GraduateUpdate(BaseSchema):
     unit_industry: Optional[str] = None
     salary_range: Optional[SalaryRange] = None
     is_aligned: Optional[bool] = None
+    employer_name: Optional[str] = None
+    employment_start_date: Optional[date] = None
+
+
+class GraduateImportItem(GraduateBase):
+    pass
+
+
+class GraduateBatchImportRequest(BaseSchema):
+    students: List[GraduateImportItem]
+
+
+class GraduateImportResultItem(BaseSchema):
+    student_id: str
+    graduate_id: int
+    action: str
+
+
+class GraduateBatchImportResponse(BaseSchema):
+    created_count: int
+    updated_count: int
+    unchanged_count: int
+    results: List[GraduateImportResultItem]
 
 
 class StatusUpdateRequest(BaseSchema):

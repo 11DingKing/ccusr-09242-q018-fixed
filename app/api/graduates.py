@@ -9,6 +9,9 @@ from app.schemas import (
     Graduate as GraduateSchema,
     GraduateCreate,
     GraduateUpdate,
+    GraduateBatchImportRequest,
+    GraduateBatchImportResponse,
+    GraduateImportResultItem,
     StatusUpdateRequest,
     StatusChangeLog as StatusLogSchema,
 )
@@ -75,6 +78,64 @@ def create_graduate(graduate_in: GraduateCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(graduate)
     return graduate
+
+
+@router.post("/batch-import", response_model=GraduateBatchImportResponse)
+def batch_import_graduates(batch: GraduateBatchImportRequest, db: Session = Depends(get_db)):
+    if not batch.students:
+        raise HTTPException(status_code=400, detail="导入名单不能为空")
+
+    results = []
+    created_count = 0
+    updated_count = 0
+    unchanged_count = 0
+
+    for item in batch.students:
+        data = item.model_dump()
+        existing = db.query(Graduate).filter(Graduate.student_id == item.student_id).first()
+
+        if existing is None:
+            graduate = Graduate(**data)
+            db.add(graduate)
+            db.flush()
+            db.add(StatusChangeLog(
+                graduate_id=graduate.id,
+                old_status=None,
+                new_status=graduate.destination_status,
+                changed_by="system",
+                remark="批量导入建档",
+            ))
+            created_count += 1
+            results.append(GraduateImportResultItem(
+                student_id=item.student_id, graduate_id=graduate.id, action="created",
+            ))
+            continue
+
+        changed = False
+        for key, value in data.items():
+            if key == "destination_status":
+                continue
+            if getattr(existing, key) != value:
+                setattr(existing, key, value)
+                changed = True
+
+        if changed:
+            updated_count += 1
+            action = "updated"
+        else:
+            unchanged_count += 1
+            action = "unchanged"
+        results.append(GraduateImportResultItem(
+            student_id=item.student_id, graduate_id=existing.id, action=action,
+        ))
+
+    db.commit()
+    return GraduateBatchImportResponse(
+        created_count=created_count,
+        updated_count=updated_count,
+        unchanged_count=unchanged_count,
+        results=results,
+    )
 
 
 @router.get("/{graduate_id}", response_model=GraduateSchema)

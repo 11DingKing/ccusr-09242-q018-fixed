@@ -4,6 +4,7 @@ from .colleges import router as colleges_router
 from .micro_majors import router as micro_majors_router
 from .statistics import router as statistics_router
 from .employer_follow_ups import router as follow_ups_router
+from .follow_up_plans import router as follow_up_plans_router
 from .warnings import router as warnings_router
 from .attributions import router as attributions_router
 from .reference_lines import router as reference_lines_router
@@ -15,6 +16,7 @@ api_router.include_router(colleges_router)
 api_router.include_router(micro_majors_router)
 api_router.include_router(statistics_router)
 api_router.include_router(follow_ups_router)
+api_router.include_router(follow_up_plans_router)
 api_router.include_router(warnings_router)
 api_router.include_router(attributions_router)
 api_router.include_router(reference_lines_router)

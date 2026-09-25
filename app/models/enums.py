@@ -54,6 +54,30 @@ class WarningStatus(str, enum.Enum):
     DISMISSED = "已忽略"
 
 
+class FollowUpStage(str, enum.Enum):
+    MONTH_3 = "入职3个月"
+    MONTH_6 = "入职6个月"
+    MONTH_12 = "入职12个月"
+
+
+class FollowUpTaskStatus(str, enum.Enum):
+    PENDING = "待回访"
+    COMPLETED = "已完成"
+    SKIPPED = "已跳过"
+    UNREACHABLE = "无法联系"
+    CANCELLED = "已取消"
+
+
+class FollowUpDecisionAction(str, enum.Enum):
+    GENERATE = "生成任务"
+    COMPLETE = "完成回访"
+    SKIP = "跳过"
+    RESCHEDULE = "改期"
+    TRANSFER = "转交"
+    MARK_UNREACHABLE = "标记无法联系"
+    CANCEL = "取消任务"
+
+
 INDUSTRIES = [
     "信息技术",
     "金融",

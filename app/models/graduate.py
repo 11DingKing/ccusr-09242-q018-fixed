@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Enum
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Date, Enum
 from sqlalchemy.orm import relationship
 from .base import Base, TimestampMixin
 from .enums import DestinationStatus, DestinationType, SalaryRange
@@ -33,8 +33,16 @@ class Graduate(Base, TimestampMixin):
     unit_industry = Column(String(50), comment="单位行业")
     salary_range = Column(Enum(SalaryRange), comment="起薪区间")
     is_aligned = Column(Boolean, default=False, comment="是否对口就业")
+    employer_name = Column(String(200), comment="用人单位名称")
+    employment_start_date = Column(Date, comment="入职日期")
 
     college = relationship("College", back_populates="graduates")
     micro_major = relationship("MicroMajor", back_populates="graduates")
     status_logs = relationship("StatusChangeLog", back_populates="graduate", order_by="StatusChangeLog.changed_at.desc()")
     follow_ups = relationship("EmployerFollowUp", back_populates="graduate", order_by="EmployerFollowUp.follow_up_date.desc()")
+    plan_tasks = relationship(
+        "FollowUpPlanTask",
+        back_populates="graduate",
+        order_by="FollowUpPlanTask.due_date",
+        cascade="all, delete-orphan",
+    )
