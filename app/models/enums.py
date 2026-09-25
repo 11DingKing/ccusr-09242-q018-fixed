@@ -54,6 +54,47 @@ class WarningStatus(str, enum.Enum):
     DISMISSED = "已忽略"
 
 
+class FollowUpStage(str, enum.Enum):
+    """入职后回访阶段。"""
+
+    MONTH_3 = "入职后3个月"
+    MONTH_6 = "入职后6个月"
+    MONTH_12 = "入职后12个月"
+
+    @property
+    def stage_month(self) -> int:
+        return STAGE_MONTHS[self]
+
+
+STAGE_MONTHS = {
+    FollowUpStage.MONTH_3: 3,
+    FollowUpStage.MONTH_6: 6,
+    FollowUpStage.MONTH_12: 12,
+}
+
+STAGE_ORDER = (FollowUpStage.MONTH_3, FollowUpStage.MONTH_6, FollowUpStage.MONTH_12)
+
+
+class PlanTaskStatus(str, enum.Enum):
+    PENDING = "待回访"
+    RESCHEDULED = "已改期"
+    TRANSFERRED = "已转交"
+    COMPLETED = "已完成"
+    SKIPPED = "已跳过"
+    UNREACHABLE = "无法联系"
+    SUPERSEDED = "已作废"
+
+
+class PlanActionType(str, enum.Enum):
+    GENERATE = "生成计划"
+    COMPLETE = "完成回访"
+    SKIP = "跳过"
+    RESCHEDULE = "改期"
+    TRANSFER = "转交"
+    MARK_UNREACHABLE = "标记无法联系"
+    SUPERSEDE = "单位变更作废"
+
+
 INDUSTRIES = [
     "信息技术",
     "金融",

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Enum
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Enum, Date
 from sqlalchemy.orm import relationship
 from .base import Base, TimestampMixin
 from .enums import DestinationStatus, DestinationType, SalaryRange
@@ -12,6 +12,7 @@ class Graduate(Base, TimestampMixin):
     name = Column(String(50), nullable=False, comment="姓名")
     gender = Column(String(10), comment="性别")
     major = Column(String(100), nullable=False, comment="主修专业")
+    graduation_date = Column(Date, comment="毕业时间")
     graduation_year = Column(Integer, nullable=False, index=True, comment="毕业届次")
     college_id = Column(Integer, ForeignKey("colleges.id"), comment="学院ID")
 
@@ -30,6 +31,8 @@ class Graduate(Base, TimestampMixin):
         nullable=False,
         comment="去向类型"
     )
+    onboard_date = Column(Date, comment="入职时间")
+    current_employer_name = Column(String(200), comment="当前用人单位名称")
     unit_industry = Column(String(50), comment="单位行业")
     salary_range = Column(Enum(SalaryRange), comment="起薪区间")
     is_aligned = Column(Boolean, default=False, comment="是否对口就业")
@@ -38,3 +41,4 @@ class Graduate(Base, TimestampMixin):
     micro_major = relationship("MicroMajor", back_populates="graduates")
     status_logs = relationship("StatusChangeLog", back_populates="graduate", order_by="StatusChangeLog.changed_at.desc()")
     follow_ups = relationship("EmployerFollowUp", back_populates="graduate", order_by="EmployerFollowUp.follow_up_date.desc()")
+    follow_up_plans = relationship("FollowUpPlan", back_populates="graduate")

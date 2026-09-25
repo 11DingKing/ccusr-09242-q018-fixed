@@ -54,6 +54,21 @@ from .profile import (
     MicroMajorProfile,
     CollegeProfile,
 )
+from .follow_up_plan import (
+    PlanGenerateRequest,
+    PlanRunOut,
+    PlanTaskOut,
+    PlanTaskDetail,
+    PlanActionOut,
+    PlanSkipRequest,
+    PlanRescheduleRequest,
+    PlanTransferRequest,
+    PlanUnreachableRequest,
+    PlanCompleteRequest,
+    GraduateImportItem,
+    GraduateImportRequest,
+    GraduateImportResult,
+)
 
 __all__ = [
     "BaseSchema",
@@ -104,4 +119,17 @@ __all__ = [
     "KeyIndicatorsComparison",
     "MicroMajorProfile",
     "CollegeProfile",
+    "PlanGenerateRequest",
+    "PlanRunOut",
+    "PlanTaskOut",
+    "PlanTaskDetail",
+    "PlanActionOut",
+    "PlanSkipRequest",
+    "PlanRescheduleRequest",
+    "PlanTransferRequest",
+    "PlanUnreachableRequest",
+    "PlanCompleteRequest",
+    "GraduateImportItem",
+    "GraduateImportRequest",
+    "GraduateImportResult",
 ]

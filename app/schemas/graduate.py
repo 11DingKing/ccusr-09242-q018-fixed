@@ -1,5 +1,5 @@
 from typing import Optional
-from datetime import datetime
+from datetime import date
 from .common import BaseSchema, TimestampSchema
 from .college import College
 from .micro_major import MicroMajor
@@ -12,11 +12,14 @@ class GraduateBase(BaseSchema):
     gender: Optional[str] = None
     major: str
     graduation_year: int
+    graduation_date: Optional[date] = None
     college_id: int
     has_micro_major: bool = False
     micro_major_id: Optional[int] = None
     destination_status: DestinationStatus = DestinationStatus.PENDING
     destination_type: DestinationType = DestinationType.UNDECIDED
+    onboard_date: Optional[date] = None
+    current_employer_name: Optional[str] = None
     unit_industry: Optional[str] = None
     salary_range: Optional[SalaryRange] = None
     is_aligned: bool = False
@@ -31,10 +34,13 @@ class GraduateUpdate(BaseSchema):
     gender: Optional[str] = None
     major: Optional[str] = None
     graduation_year: Optional[int] = None
+    graduation_date: Optional[date] = None
     college_id: Optional[int] = None
     has_micro_major: Optional[bool] = None
     micro_major_id: Optional[int] = None
     destination_type: Optional[DestinationType] = None
+    onboard_date: Optional[date] = None
+    current_employer_name: Optional[str] = None
     unit_industry: Optional[str] = None
     salary_range: Optional[SalaryRange] = None
     is_aligned: Optional[bool] = None
